@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">iraq_rts_usb_save</string>
+    <string name="app_name">USB_SAVE</string>
+    <!-- Preference Titles -->
+    <string name="pso_label_header">USB Label</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="pso_title">USB title</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="report_title1">ELECTION RETURNS</string>
+    <string name="report_title2">FOR LOCAL POSITIONS</string>
 </resources>

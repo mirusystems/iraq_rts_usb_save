@@ -1,0 +1,70 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/pso_label_header">
+
+        <EditTextPreference
+            app:key="title"
+            app:summary="Title to display on PSO card"
+            app:title="@string/pso_title" />
+
+        <!--        <ListPreference-->
+        <!--            app:defaultValue="reply"-->
+        <!--            app:entries="@array/reply_entries"-->
+        <!--            app:entryValues="@array/reply_values"-->
+        <!--            app:key="reply"-->
+        <!--            app:title="@string/reply_title"-->
+        <!--            app:useSimpleSummaryProvider="true" />-->
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="override_checking"
+            app:summary="Choose whether to display a warning on the screen if the card already has polling station information written on it"
+            app:title="Override checking" />
+        <!--        <SwitchPreferenceCompat-->
+        <!--            app:defaultValue="true"-->
+        <!--            app:key="election_mode"-->
+        <!--            app:title="Election mode" />-->
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="education_mode"
+            app:summary="Choose whether or not to use information from one polling place repeatedly"
+            app:title="Education mode" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="pso_label_print"
+            app:summary="Choose whether to print labels in simulation mode"
+            app:title="PSO label print" />
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="ed_enabled"
+            app:summary="Choose whether to use ED or not"
+            app:title="ED" />
+<!--        <ListPreference-->
+<!--            android:entries="@array/dpi"-->
+<!--            android:entryValues="@array/dpi"-->
+<!--            app:key="printer_dpi"-->
+<!--            app:summary="Choose the DPI of your printer"-->
+<!--            app:title="Printer DPI" />-->
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="outline_enabled"
+            app:summary="Choose whether or not to add an outline to the label"
+            app:title="Label outline" />
+    </PreferenceCategory>
+
+    <!--    <PreferenceCategory app:title="@string/sync_header">-->
+
+    <!--        <SwitchPreferenceCompat-->
+    <!--            app:key="sync"-->
+    <!--            app:title="@string/sync_title" />-->
+
+    <!--        <SwitchPreferenceCompat-->
+    <!--            app:dependency="sync"-->
+    <!--            app:key="attachment"-->
+    <!--            app:summaryOff="@string/attachment_summary_off"-->
+    <!--            app:summaryOn="@string/attachment_summary_on"-->
+    <!--            app:title="@string/attachment_title" />-->
+
+    <!--    </PreferenceCategory>-->
+
+</PreferenceScreen>

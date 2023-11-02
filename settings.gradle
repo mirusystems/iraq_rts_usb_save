@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "iraq_rts_usb_save"
 include ':app'
+include ':devices-printer-sato'
+include ':utils-miru'
+include ':utils-image'

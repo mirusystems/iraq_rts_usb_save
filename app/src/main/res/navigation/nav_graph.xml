@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.mirusystems.usbsave.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/splash_fragment">
+        <action
+            android:id="@+id/action_splashFragment_to_initFragment"
+            app:destination="@id/initFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/initFragment"
+        android:name="com.mirusystems.usbsave.InitFragment"
+        android:label="InitFragment"
+        tools:layout="@layout/init_fragment">
+        <action
+            android:id="@+id/action_initFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.mirusystems.usbsave.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/login_fragment">
+        <action
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.mirusystems.usbsave.MainFragment"
+        android:label="Main"
+        tools:layout="@layout/main_fragment">
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_govUdbListFragment"
+            app:destination="@id/govUsbListFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/govUsbListFragment"
+        android:name="com.mirusystems.usbsave.GovUsbListFragment"
+        android:label="GOV List"
+        tools:layout="@layout/gov_usb_list_fragment">
+
+        <action
+            android:id="@+id/action_govUsbListFragment_to_usbsaveListFragment"
+            app:destination="@id/usbsaveListFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.mirusystems.usbsave.SettingsFragment"
+        android:label="SettingsFragment" />
+
+    <fragment
+        android:id="@+id/usbsaveListFragment"
+        android:name="com.mirusystems.usbsave.UsbSaveFragment"
+        android:label="UsbSaveFragment"
+        tools:layout="@layout/usb_list_fragment" />
+
+</navigation>
