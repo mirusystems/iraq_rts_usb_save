@@ -23,8 +23,14 @@
   
        
 3. gov 별 선택 화면
+   
 ![Screenshot_20231109_172650](https://github.com/mirusystems/iraq_rts_usb_save/assets/138095416/d20d3fc2-d9ff-49ce-8284-ca3d0b421865)
 
-4.생성 완료 화면 
+4. 생성 완료 화면 
+
 ![Screenshot_20231109_172548](https://github.com/mirusystems/iraq_rts_usb_save/assets/138095416/8f314861-1fb3-4822-984a-fe6dcec94191)
 
+
+5. 라벨 프린터 출력
+   
+![usb_label](https://github.com/mirusystems/iraq_rts_usb_save/assets/138095416/09595754-6b66-4e1a-b44b-d117efe2f146)
