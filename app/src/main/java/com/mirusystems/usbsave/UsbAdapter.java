@@ -101,7 +101,7 @@ public class UsbAdapter extends RecyclerView.Adapter<UsbAdapter.ViewHolder> {
                         holder.rootView.setBackgroundColor(Color.RED);
                         setTextColor(holder, Color.WHITE);
                     } else {
-                        if (mode == Manager.MODE_SIMULATION_PSO_CARD && ps.done > 0) {
+                        if (ps.done > 0) {
                             holder.rootView.setBackgroundColor(Color.BLUE);
                             setTextColor(holder, Color.WHITE);
                         } else {

@@ -16,6 +16,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.mirusystems.usbsave.data.AppDatabase;
 import com.mirusystems.usbsave.data.LogDatabase;
 import com.mirusystems.usbsave.databinding.MainFragmentBinding;
+import com.mirusystems.utility.MiruUtility;
+
+import java.io.File;
+import java.util.Locale;
 
 
 public class MainFragment extends BaseFragment {
@@ -23,7 +27,10 @@ public class MainFragment extends BaseFragment {
 
     private MainFragmentBinding binding;
     private MainViewModel mViewModel;
+    public static String[] USB_PATH = new String[4];
+    public static String[] USB_DISK = new String[4];
 
+    public int mUSBSearchCnt = 0;
     private static final int PERMISSION_REQUEST_CODE = 123;
 
     public static MainFragment newInstance() {
@@ -44,7 +51,10 @@ public class MainFragment extends BaseFragment {
         binding.setViewModel(mViewModel);
         binding.setLifecycleOwner(this);
         checkAndRequestPermissions();
-
+        for (int i = 0; i < USB_DISK.length; ++i) {
+            USB_DISK[i] = String.format(Locale.US, "/mnt/usbdisk%d", i + 1);
+        }
+        SearchUSBDisk();
         mViewModel.getSelectedMode().observe(getViewLifecycleOwner(), event -> {
             Integer mode = event.getContentIfNotHandled();
             if (mode != null) {
@@ -52,6 +62,30 @@ public class MainFragment extends BaseFragment {
                 switch (mode) {
                     case Manager.MODE_4_SIMULATION_USB: {
                         navController.navigate(R.id.govUsbListFragment);
+                        break;
+                    }
+                    case Manager.MODE_COPY_USB_DATA:{
+                        for (int i = 0; i < mUSBSearchCnt; ++i) {
+                            File f = new File(USB_PATH[i] + "/RTS");
+                            if (!f.exists())
+                                f.mkdirs();
+                            MiruUtility.MiruService("cp -r /mnt/sdcard/RTS/*" +  USB_PATH[i] + "/RTS/");
+                        }
+                        MiruUtility.MiruService("sync");
+                        break;
+                    }
+                    case Manager.MODE_CLEAR_USB_DATA:{
+                        if(App.isDevice_Xml_Data_Delete_Mode()){
+                            MiruUtility.MiruService("rm -rf " + "/mnt/sdcard/RTS/*");
+                            MiruUtility.MiruService("rm -rf " + "/mnt/sdcard/replacexml/*");
+                        }
+                        for (int i = 0; i < mUSBSearchCnt; ++i) {
+                            File f = new File(USB_PATH[i] + "/RTS");
+                            if (!f.exists())
+                                f.mkdirs();
+                            MiruUtility.MiruService("rm -rf " +  USB_PATH[i] + "/RTS/*");
+                        }
+                        MiruUtility.MiruService("sync");
                         break;
                     }
                     case Manager.MODE_SETTINGS: {
@@ -71,6 +105,24 @@ public class MainFragment extends BaseFragment {
             }
         });
     }
+
+    public synchronized void SearchUSBDisk() {
+        mUSBSearchCnt = 0;
+        for (int i = 0; i < USB_DISK.length; ++i) {
+//            Log.i("USB", "finding usb path : [" + USB_DISK[i] + ConfigManager.COMMON_DIR + "][" + mUSBSearchCnt + "]");
+            if (new File(USB_DISK[i]).exists()) {
+                if (mUSBSearchCnt < USB_PATH.length) {
+                    USB_PATH[mUSBSearchCnt] = USB_DISK[i];
+//                    Log.i("USB", "exists usb path : [" + USB_PATH[mUSBSearchCnt] + "][" + mUSBSearchCnt + "]");
+                    mUSBSearchCnt++;
+                }
+                if (mUSBSearchCnt >= USB_PATH.length)
+                    break;
+            }
+        }
+//        Log.i("USB","found usb count : "+mUSBSearchCnt);
+    }
+
 
     private void checkAndRequestPermissions() {
         // 권한이 이미 허용되었는지 확인

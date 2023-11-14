@@ -23,11 +23,36 @@
             android:layout_height="wrap_content"
             android:onClick="@{()->viewModel.onSimulationUsbButtonClicked()}"
             android:text="4 SIMULATION USB MAKE"
-            app:layout_constraintBottom_toTopOf="@+id/settingsButton"
+            app:layout_constraintBottom_toTopOf="@+id/clearUsb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/clearUsb"
+            style="@style/Widget.Theme.Button.Main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->viewModel.onClearUsbDataClicked()}"
+            android:text="CLEAR DATA"
+            app:layout_constraintBottom_toTopOf="@+id/copyUsb"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/simulationUsbSatButton"/>
+
+        <Button
+            android:id="@+id/copyUsb"
+            style="@style/Widget.Theme.Button.Main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->viewModel.onCopyUsbDataButtonClicked()}"
+            android:text="COPY DATA"
+            app:layout_constraintBottom_toTopOf="@+id/settingsButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clearUsb"/>
 
         <Button
             android:id="@+id/settingsButton"
@@ -36,11 +61,11 @@
             android:layout_height="wrap_content"
             android:onClick="@{()->viewModel.onSettingsButtonClicked()}"
             android:text="settings"
-            app:layout_constraintBottom_toBottomOf="@+id/exitButton"
+            app:layout_constraintBottom_toTopOf="@+id/exitButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/simulationUsbSatButton" />
+            app:layout_constraintTop_toBottomOf="@+id/copyUsb" />
 
         <Button
             android:id="@+id/exitButton"

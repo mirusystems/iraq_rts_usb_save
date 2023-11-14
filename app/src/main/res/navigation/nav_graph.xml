@@ -60,6 +60,10 @@
         tools:layout="@layout/gov_usb_list_fragment">
 
         <action
+            android:id="@+id/action_govUsbListFragment_to_usbVrcListFragmnet"
+            app:destination="@id/usbVrcListFragmnet" />
+
+        <action
             android:id="@+id/action_govUsbListFragment_to_usbsaveListFragment"
             app:destination="@id/usbsaveListFragment" />
 
@@ -68,7 +72,14 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.mirusystems.usbsave.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment"
+        />
+
+    <fragment
+        android:id="@+id/usbVrcListFragmnet"
+        android:name="com.mirusystems.usbsave.UsbVrcListFragment"
+        android:label="UsbVrcListFragmnet"
+        tools:layout="@layout/usb_vrc_list_fragment"/>
 
     <fragment
         android:id="@+id/usbsaveListFragment"

@@ -25,6 +25,8 @@ public class App extends Application {
     public static final String local_PATH = "/mnt/sdcard/RTS";
     public static final String replacexml = "/mnt/sdcard/replacexml";
 
+    public static final String comparexml = "/mnt/sdcard/compare";
+
     public static final String QR_SRCFILE_NAME = "decsv_value.csv";
     public static final String LOG_SRCFILE_NAME = "depoi_value.poi";
     public static byte[] ECRYPT_KEY;
@@ -37,6 +39,7 @@ public class App extends Application {
         MiruUtility.MiruService("mkdir -p /mnt/sdcard/RTS");
         MiruUtility.MiruService("mkdir -p /mnt/sdcard/xml");
         MiruUtility.MiruService("mkdir -p /mnt/sdcard/replacexml");
+        MiruUtility.MiruService("mkdir -p /mnt/sdcard/compare");
 //        drawLabel();
 
         String title = getTitle();
@@ -72,30 +75,31 @@ public class App extends Application {
         return preferences.getString("title", "");
     }
 
-    public static boolean isOverrideCheckingEnabled() {
+    public static boolean isDevice_Xml_Data_Delete_Mode() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("override_checking", true);
+        return preferences.getBoolean("xml_data_delete", true);
     }
 
-//    public static boolean isElectionMode() {
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        return preferences.getBoolean("election_mode", true);
-//    }
-
-    public static boolean isEducationMode() {
+    public static boolean isSelect_Mode() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("education_mode", true);
+        return preferences.getBoolean("select_mode", true);
     }
 
-    public static boolean isPsoLabelPrint() {
+    public static boolean isAll_Print() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("pso_label_print", true);
+        return preferences.getBoolean("label_all_mode", true);
     }
 
-    public static boolean isEdEnabled() {
+    public static boolean isVrc_mode() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean("ed_enabled", false);
+        return preferences.getBoolean("vrc_mode", true);
     }
+
+    public static boolean isUsbLabelPrint() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean("usb_label_print", true);
+    }
+
 
     public static int getPrinterDpi() {
 //        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

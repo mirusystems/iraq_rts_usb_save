@@ -53,6 +53,14 @@ public class MainViewModel extends ViewModel {
         selectedModeLiveData.postValue(new Event<>(Manager.MODE_4_SIMULATION_USB));
     }
 
+    public void onClearUsbDataClicked() {
+        selectedModeLiveData.postValue(new Event<>(Manager.MODE_CLEAR_USB_DATA));
+    }
+
+    public void onCopyUsbDataButtonClicked() {
+        selectedModeLiveData.postValue(new Event<>(Manager.MODE_COPY_USB_DATA));
+    }
+
     public void onSettingsButtonClicked() {
         selectedModeLiveData.postValue(new Event<>(Manager.MODE_SETTINGS));
     }

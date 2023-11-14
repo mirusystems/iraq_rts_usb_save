@@ -16,12 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Manager {
     private static final String TAG = "Manager";
 
-    public static final int MODE_SIMULATION_PSO_CARD = 1;
-    public static final int MODE_SIMULATION_VVD = 2;
-    public static final int MODE_ELECTION_PSO_VVD = 3;
-    public static final int MODE_PRODUCT_NUMBER = 4;
-    public static final int MODE_RTS_SAT_IMEI = 5;
-    public static final int MODE_4_SIMULATION_USB = 8;
+    public static final int MODE_4_SIMULATION_USB = 1;
+
+    public static final int MODE_CLEAR_USB_DATA = 2;
+    public static final int MODE_COPY_USB_DATA= 3;
     public static final int MODE_SETTINGS = 6;
     public static final int MODE_EXIT = 7;
 
@@ -68,12 +66,12 @@ public class Manager {
     }
 
     public static final String DB_PATH = "/sdcard/sim4_usb.db";
-    public static final String Usb_DB_PATH = "/sdcard/sim4_usb.db";
+
     public static final String LOG_PATH = "/sdcard/psolog.db";
-    public static final String DB_NAME = "pso";
+    public static final String DB_NAME = "sim4_usb.db";
     public static final String DB_EXT = "db";
-    public static final String PW_NAME = "pso.pw";
-    public static final String PW_PATH = "/sdcard/pso.pw";
+//    public static final String PW_NAME = "pso.pw";
+//    public static final String PW_PATH = "/sdcard/pso.pw";
 
     private static AppDatabase db;
     public static AppDatabase getDb() {
@@ -100,8 +98,7 @@ public class Manager {
      */
     public static boolean isFileSaved() {
         File dbFile = new File(DB_PATH);
-        File pwFile = new File(PW_PATH);
-        return dbFile.exists() && pwFile.exists();
+        return dbFile.exists();
     }
 
     private static final String[] USB_PATHS = {
@@ -137,7 +134,7 @@ public class Manager {
                     if (pathname.isFile()) {
                         String fileName = pathname.getName();
                         String ext = Files.getFileExtension(fileName);
-                        if (ext.equals(DB_EXT) || fileName.equals(PW_NAME)) {
+                        if (ext.equals(DB_EXT)) {
                             return true;
                         }
                     }
@@ -203,54 +200,7 @@ public class Manager {
         return null;
     }
 
-    public static boolean findPasswordOnUsb() {
-        List<String> paths = new ArrayList<>();
-        for (String path : USB_PATHS) {
-            File dir = new File(path);
-            if (dir.exists() && dir.canRead() && dir.canWrite() && dir.canExecute()) {
-                paths.add(path);
-                File[] files = dir.listFiles(pathname -> {
-                    if (pathname.isFile()) {
-                        String fileName = pathname.getName();
-                        if (fileName.equals(PW_NAME)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                if (files != null && files.length > 0) {
-                    Log.v(TAG, "findPasswordOnUsb: true");
-                    return true;
-                }
-            }
-        }
 
-        return false;
-    }
-
-    public static String getPasswordPathOnUsb() {
-        List<String> paths = new ArrayList<>();
-        for (String path : USB_PATHS) {
-            File dir = new File(path);
-            if (dir.exists() && dir.canRead() && dir.canWrite() && dir.canExecute()) {
-                paths.add(path);
-                File[] files = dir.listFiles(pathname -> {
-                    if (pathname.isFile()) {
-                        String fileName = pathname.getName();
-                        if (fileName.equals(PW_NAME)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-                if (files != null && files.length > 0) {
-                    return files[0].getAbsolutePath();
-                }
-            }
-        }
-
-        return null;
-    }
 
     private static int mode;
 
@@ -280,18 +230,12 @@ public class Manager {
 
     public static String getModeDescription(int mode) {
         switch (mode) {
-            case MODE_SIMULATION_PSO_CARD:
-                return "MODE_SIMULATION_PSO_CARD";
-            case MODE_SIMULATION_VVD:
-                return "MODE_SIMULATION_VVD";
-            case MODE_ELECTION_PSO_VVD:
-                return "MODE_ELECTION_PSO_VVD";
-            case MODE_PRODUCT_NUMBER:
-                return "MODE_PRODUCT_NUMBER";
-            case MODE_RTS_SAT_IMEI:
-                return "MODE_RTS_SAT_IMEI";
             case MODE_4_SIMULATION_USB:
                 return "MODE_4_SIMULATION_USB";
+            case MODE_COPY_USB_DATA:
+                return "MODE_COPY_USB_DATA";
+            case MODE_CLEAR_USB_DATA:
+                return "MODE_CLEAR_USB_DATA";
             case MODE_SETTINGS:
                 return "MODE_SETTINGS";
             case MODE_EXIT:

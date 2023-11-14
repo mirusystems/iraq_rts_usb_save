@@ -23,6 +23,8 @@ public interface UsbSaveDao {
     void delete(UsbListEntity usbListEntity);
     @Query("SELECT * FROM usb_list WHERE gov_id=:govCode ORDER BY vrc_id, pc_id")
     List<UsbListEntity> getPsList(int govCode);
+    @Query("SELECT * FROM usb_list WHERE GOV_ID=:govCode AND VRC_ID=:vrcCode ORDER BY VRC_ID, PC_ID")
+    List<UsbListEntity> getPsList(int govCode, int vrcCode);
 
     @Query("SELECT * FROM usb_list WHERE pc_id=:pcCode")
     UsbListEntity getPollingStation(int pcCode);
@@ -33,7 +35,8 @@ public interface UsbSaveDao {
     @Query("SELECT COUNT(PC_ID) AS completedCount FROM usb_list WHERE GOV_ID=:govCode AND done > 0;")
     Integer getCompletedPsCountForSimulation(int govCode);
 
-
+    @Query("SELECT vrc_id AS code, vrc_name AS name, COUNT(*) AS totalCount, sum(done) AS completedCount FROM usb_list WHERE gov_id=:govCode GROUP BY vrc_id")
+    List<UsbDistrict> getVrcList(int govCode);
     @Update
     void update(UsbListEntity usbListEntity);
 }

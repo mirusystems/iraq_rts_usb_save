@@ -63,7 +63,12 @@ public class GovUsbListFragment extends BaseFragment {
                 int govCode = district.getCode();
                 args.putInt(KEY_GOV_CODE, govCode);
                 args.putInt(KEY_ED_CODE, govCode);
-                navController.navigate(R.id.usbsaveListFragment, args);
+                if(App.isVrc_mode()){
+                    navController.navigate(R.id.usbVrcListFragmnet, args);
+                }else{
+                    navController.navigate(R.id.usbsaveListFragment, args);
+                }
+
             }
         });
     }

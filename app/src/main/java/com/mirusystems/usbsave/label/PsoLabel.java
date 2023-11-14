@@ -46,22 +46,18 @@ public class PsoLabel {
         pc = "172101";
         ps = "17210101";
 
-        if (App.isEdEnabled()) {
-            qr = String.format(Locale.ENGLISH, "%s%s-%s-%s-%s", gov, ed, ps.substring(0, 4), ps.substring(4, 6), ps.substring(6, 8));
-        } else {
-            qr = String.format(Locale.ENGLISH, "%s-%s-%s-%s", gov, ps.substring(0, 4), ps.substring(4, 6), ps.substring(6, 8));
-        }
+
+        qr = String.format(Locale.ENGLISH, "%s-%s-%s-%s", gov, ps.substring(0, 4), ps.substring(4, 6), ps.substring(6, 8));
+
         title = App.getTitle();
         setPixels();
     }
 
     public PsoLabel(PollingStation p) {
         String psCode = String.valueOf(p.getPsCode());
-        if (App.isEdEnabled()) {
-            qr = String.format(Locale.ENGLISH, "%02d%02d-%s-%s-%s", p.getGovCode(), p.getEdCode(), psCode.substring(0, 4), psCode.substring(4, 6), psCode.substring(6, 8));
-        } else {
-            qr = String.format(Locale.ENGLISH, "%02d-%s-%s-%s", p.getGovCode(), psCode.substring(0, 4), psCode.substring(4, 6), psCode.substring(6, 8));
-        }
+
+        qr = String.format(Locale.ENGLISH, "%02d-%s-%s-%s", p.getGovCode(), psCode.substring(0, 4), psCode.substring(4, 6), psCode.substring(6, 8));
+
         title = App.getTitle();
         setPixels();
     }

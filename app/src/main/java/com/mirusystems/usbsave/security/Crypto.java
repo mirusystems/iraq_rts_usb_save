@@ -530,6 +530,28 @@ public class Crypto {
     }
 
 
+    public static byte[] AESDecryptHost(byte[] data, String stationid, byte[] hashData) throws Exception {
+
+        Log.d("CRYPTO", "AESEncryptHost() stationid=["+stationid+"], hashData=["+ByteUtil.hexify(hashData)+"]");
+        Cipher ce = Cipher.getInstance("AES/CBC/PKCS7Padding");
+        byte[] key = generateHostKey(hashData, stationid);
+//        Log.d(TAG, "AESEncryptHost: hashData" + ByteUtil.toHexString(hashData));
+//        Log.d(TAG, "AESEncryptHost: key " + ByteUtil.toHexString(key));
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        String ivhash = "2023-12-18 14:14:14";
+        String hash =  SHA2_digestStrg(ivhash.getBytes("UTF-8"));
+        String ivString = hash.substring(0, 8)+hash.substring(hash.length()-8, hash.length());
+        Log.d(TAG, "AESEncryptHost:ivString " + ivString);
+        byte [] IV_VECTOR = ivString.getBytes();
+        //SYMKEYS.IV_VECTOR 대체
+        IvParameterSpec iv = new IvParameterSpec(IV_VECTOR);
+//       IvParameterSpec iv = new IvParameterSpec(new byte[16]);
+//        Log.d("SEC", "IV=["+ ByteUtil.toHexString(iv.getIV())+"]");
+        ce.init(Cipher.DECRYPT_MODE, secretKey, iv);
+        return ce.doFinal(data);
+    }
+
+
     public static Key getPK1() throws Exception {
         return PK1;
     }

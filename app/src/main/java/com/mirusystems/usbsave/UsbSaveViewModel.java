@@ -2,8 +2,10 @@ package com.mirusystems.usbsave;
 
 import static com.mirusystems.usbsave.App.LOG_SRCFILE_NAME;
 import static com.mirusystems.usbsave.App.QR_SRCFILE_NAME;
+import static com.mirusystems.usbsave.App.comparexml;
 import static com.mirusystems.usbsave.App.local_PATH;
 import static com.mirusystems.usbsave.App.replacexml;
+import static com.mirusystems.utility.MiruUtility.CBC;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -43,6 +45,8 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
     private LogDatabase log;
     private int govCode;
     private int edCode;
+
+    private String xmlexamplepath = "/mnt/sdcard/xml/";
     private int vrcCode;
     private int pcCode;
     public String mDeviceNo = "854342";
@@ -56,7 +60,7 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
     private MutableLiveData<Integer> psWritingPositionLiveData = new MutableLiveData<>();
     private MutableLiveData<UsbState> UsbStateLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isWorkingLiveData = new MutableLiveData<>();
-    private MutableLiveData<Integer> completedPollingStationCountLiveData = new MutableLiveData<>();
+    private MutableLiveData<Event<Integer>> completedPollingStationCountLiveData = new MutableLiveData<>();
     private MutableLiveData<WorkerState> workerStateLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isStartButtonEnabledLiveData = new MutableLiveData<>();
     private MutableLiveData<String> alreadyWrittenPsoLiveData = new MutableLiveData<>();
@@ -140,34 +144,29 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
         int completed = 0;
         completed = db.usbSaveDao().getCompletedPsCountForSimulation(govCode);
 
-        completedPollingStationCountLiveData.postValue(completed);
+        completedPollingStationCountLiveData.postValue(new Event<>(completed));
     }
 
-//    public void setCode(int govCode, int edCode, int vrcCode, int pcCode) {
-//        this.govCode = govCode;
-//        this.edCode = edCode;
-//        this.vrcCode = vrcCode;
-//        this.pcCode = pcCode;
-//        // TODO: 2021-05-28 DB가 PS 별로 정보를 가지고 있어야 한다
-//        psList = db.pollingStationDao().getPsList(govCode, edCode, vrcCode, pcCode);
-//        boolean isStartIndexSet = false;
-//        int index = 0;
-//        for (PollingStation ps : psList) {
-//            if (!isStartIndexSet && ps.pso < 1) {
-//                startIndex = index;
-//                isStartIndexSet = true;
-//            }
-//            index++;
-//        }
-//        pollingStationListLiveData.postValue(psList);
-//        int completed = 0;
-//        if (Manager.getMode() == Manager.MODE_ELECTION_PSO_VVD) {
-//            completed = db.pollingStationDao().getCompletedPsCountForElection(govCode, edCode);
-//        } else {
-//            completed = db.pollingStationDao().getCompletedPsCountForSimulation(govCode, edCode);
-//        }
-//        completedPollingStationCountLiveData.postValue(new Event<>(completed));
-//    }
+    public void setCode(int govCode, int vrcCode) {
+        this.govCode = govCode;
+        this.vrcCode = vrcCode;
+        // TODO: 2021-05-28 DB가 PS 별로 정보를 가지고 있어야 한다
+        psList = db.usbSaveDao().getPsList(govCode, vrcCode);
+        boolean isStartIndexSet = false;
+        int index = 0;
+        for (UsbListEntity ps : psList) {
+            if (!isStartIndexSet && ps.done < 1) {
+                startIndex = index;
+                isStartIndexSet = true;
+            }
+            index++;
+        }
+        pollingStationListLiveData.postValue(psList);
+        int completed = 0;
+        completed = db.usbSaveDao().getCompletedPsCountForSimulation(govCode);
+
+        completedPollingStationCountLiveData.postValue(new Event<>(completed));
+    }
 
     public LiveData<List<UsbListEntity>> getPollingStationList() {
         return pollingStationListLiveData;
@@ -193,7 +192,7 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
         return workerStateLiveData;
     }
 
-    public LiveData<Integer> getCompletedPollingStationCount() {
+    public LiveData<Event<Integer>> getCompletedPollingStationCount() {
         return completedPollingStationCountLiveData;
     }
 
@@ -255,23 +254,61 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
         }
     }
 
+//    public void setRtsData(UsbListEntity selectedPs) {
+//        if (selectedPs == null) {
+//            return;
+//        }
+//
+//        String basePrecinctID = String.valueOf(selectedPs.getPcId()); // "100101"
+//        int govcode = selectedPs.gov_id;
+//        int specialcode = 50;
+//        String txmlFileName;
+//        int numPs = selectedPs.getNumPs();
+//        int elecType = selectedPs.elec_type;
+//        String txmlFilePath;
+//
+//        String txmlFileBaseName = (elecType == 50 || elecType == 80) ? specialcode + ".txml" : govcode + ".txml";
+//            for (int i = 1; i <= numPs; i++) {
+//                String precinctSuffix = String.format("%02d", i);
+//                mPrecinctID = basePrecinctID + precinctSuffix;
+//                txmlFileName = txmlFileBaseName;
+//                txmlFilePath = xmlexamplepath + txmlFileName;
+//                processFiles(selectedPs, txmlFilePath);
+//                }
+//    }
+//
+//    private void processFiles(UsbListEntity selectedPs, String txmlFilePath) {
+//        if (fileExists(txmlFilePath)) {
+//            String govNameReplacement = selectedPs.gov_name;
+//            String vrcNameReplacement = selectedPs.vrc_name;
+//            String pcNameReplacement = selectedPs.pc_name;
+//            String precinctIdReplacement = mPrecinctID + "_" + mDeviceNo;
+//            repaclexml(txmlFilePath, govNameReplacement, vrcNameReplacement, pcNameReplacement, precinctIdReplacement);
+//            SaveUSBTransformDataFile(replacexml, precinctIdReplacement, local_PATH, mPrecinctID + "_" + mDeviceNo, ".xml", mPrecinctID);
+//            SaveUSBTransformDataFile(replacexml, precinctIdReplacement, local_PATH, mPrecinctID + "_" + mDeviceNo, ".csv", mPrecinctID);
+//            SaveUSBTransformDataFile(replacexml, precinctIdReplacement, local_PATH, mPrecinctID + "_" + mDeviceNo, ".poi", mPrecinctID);
+//            SaveVotingResultToUsb();
+//        }
+//    }
+
     public void setRtsData(UsbListEntity selectedPs) {
         Log.d(TAG, "setRtsData: pslist size %d" + psList.size());
         String txmlFileName;
         if (selectedPs != null) {
             String basePrecinctID = String.valueOf(selectedPs.getPcId()); // "100101"
             int govcode = selectedPs.gov_id;
+            int specialcode = 50;
 
             for (int i = 1; i <= selectedPs.getNumPs(); i++) {
                 String precinctSuffix = String.format("%02d", i);
                 mPrecinctID = basePrecinctID + precinctSuffix;
                 if(selectedPs.elec_type == 50 || selectedPs.elec_type == 80 ){
-                     txmlFileName = 50 + ".txml";
+                    txmlFileName = specialcode + ".txml";
                 }else {
-                     txmlFileName = govcode + ".txml";
+                    txmlFileName = govcode + ".txml";
                 }
 
-                String txmlFilePath = "/mnt/sdcard/xml/" + txmlFileName;
+                String txmlFilePath = xmlexamplepath + txmlFileName;
                 if (fileExists(txmlFilePath)) {
                     String govNameReplacement = selectedPs.gov_name;
                     String vrcNameReplacement = selectedPs.vrc_name;
@@ -287,7 +324,6 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
             toastLiveData.postValue(new Event<>("WRITE SUCCESS"));
         }
     }
-
 
     private boolean fileExists(String filePath) {
         File file = new File(filePath);
@@ -338,12 +374,21 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
 
             byte[] plainText = MiruUtility.convertFileToByteArray(srcpath , "_zipped_" + srcname + ".7z", null, 0);
             byte[] cipherText = Crypto.AESEncryptHost(plainText, mPrecinctID, hashBytes);
+            byte[] decrypText = Crypto.AESDecryptHost(cipherText,mPrecinctID, hashBytes);
+            if(decrypText.length == 0){
+                Log.d(TAG, "SaveUSBTransformDataFile: faile");
+                return false;
+            }
+//            String hash_decry = Crypto.SHA2_digestStrg(decrypText);
+//            if(!hash_src.equals(hash_decry)){
+//                Log.d(TAG, "SaveUSBTransformDataFile: faile");
+//                return false;
+//            }
             MiruUtility.RemoveFile(srcpath + "/" + "_zipped_" + srcname + ".7z");
             MiruUtility.MiruService("sync");
             Sleep(50);
 
             MiruUtility.convertByteArrayToFile(cipherText, cipherText.length, dstpath + "/" + dstname + dstext);
-
             MiruUtility.MiruService("sync");
         } catch (Exception e) {
             e.printStackTrace();
@@ -426,7 +471,6 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
         }  // 500 ms sleep.
     }
 
-
     @Override
     public void onItemSelected(UsbListEntity usbListEntity) {
         Log.v(TAG, "onItemSelected: usbListEntity = " + usbListEntity);
@@ -483,6 +527,11 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
         if (workerThread != null) {
             workerThread.stopWork();
             workerThread.interrupt();
+            try {
+                workerThread.join(); // 스레드가 안전하게 종료 할때까지 기다린다.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             workerThread = null;
         }
     }
@@ -582,12 +631,16 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
                     break;
                 }
                 case USB_CONNECTED: {
-                    setRtsData(ps);
-                    setState(WorkerState.WRITING_USB);
+                    if(App.isAll_Print()){
+                        setState(WorkerState.WRITING_USB);
+                    }else{
+                        setRtsData(ps);
+                        setState(WorkerState.WRITING_USB);
+                    }
                     break;
                 }
                 case WRITING_USB: {
-                    if (printUsbLabel(ps)) {
+                    if (printUsbLabel(ps) && printerManager!=null) {
                         setState(WorkerState.WRITE_DONE);
                     } else {
                         setState(WorkerState.WRITE_FAIL);
@@ -601,12 +654,17 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
                     int completed = 0;
                     completed = db.usbSaveDao().getCompletedPsCountForSimulation(govCode);
 
-                    completedPollingStationCountLiveData.postValue(completed);
+                    completedPollingStationCountLiveData.postValue(new Event<>(completed));
                     callback.onSuccess(psIndex);
                     previousState.setState(UsbState.STATE_WRITE_SUCCESS);
-                    if (!App.isEducationMode()) {
-                        psIndex++;
+                    psIndex++;
+                    if(App.isSelect_Mode()) {
+                        break;
+                    } else if (psList.size() > psIndex) {
+                        Log.d(TAG, "work: all_mode");
+                        setState(WorkerState.WAITING_USB_CONNECTED);
                     }
+
                     break;
                 }
                 case WRITE_FAIL: {
@@ -615,7 +673,9 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
                     setState(WorkerState.WAITING_USB_DISCONNECTED);
                     break;
                 }
-                case WAITING_USB_DISCONNECTED: {
+                case WAITING_USB_DISCONNECTED:
+                case WORKER_STOP: {
+                    psIndex = psList.size();
                     break;
                 }
                 case USB_DISCONNECTED: {
@@ -636,6 +696,7 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
 
         public void stopWork() {
             isWorking = false;
+            setState(WorkerState.WORKER_STOP);
             if (previousState.getState() == UsbState.STATE_READY) {
                 previousState.setState(UsbState.STATE_DESELECTED);
                 UsbStateLiveData.setValue(previousState);
@@ -650,22 +711,22 @@ public class UsbSaveViewModel extends ViewModel implements OnItemSelectListener<
 
         private boolean printUsbLabel(UsbListEntity ps) {
             Bitmap labelBitmap;
-            Log.v(TAG, "printPsoLabel: Manager.getMode() = " + Manager.getMode());
+            Log.v(TAG, "printUsbLabel: Manager.getMode() = " + Manager.getMode());
             UsbLabel label = new UsbLabel(ps);
             labelBitmap = label.draw();
 
-            Log.v(TAG, "printPsoLabel: labelBitmap = " + labelBitmap.getWidth() + "x" + labelBitmap.getHeight());
+            Log.v(TAG, "printUsbLabel: labelBitmap = " + labelBitmap.getWidth() + "x" + labelBitmap.getHeight());
             byte[] bmp = BmpUtil.toBmp(labelBitmap, 1);
             new Thread(() -> {
                 try {
                     Files.write(bmp, new File("/sdcard/usbvvd.bmp"));
-                    Log.v(TAG, "printPsoLabel: save image");
+                    Log.v(TAG, "printUsbLabel: save image");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }).start();
 
-            if (!App.isPsoLabelPrint()) {
+            if (!App.isUsbLabelPrint()) {
                 return true;
             }
 

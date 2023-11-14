@@ -82,7 +82,6 @@ public class InitViewModel extends ViewModel {
     }
 
     public void onUpdatePasswordButtonClicked() {
-        savePasswordFile();
         checkSavedFile();
         existPasswordOnUsbLiveData.postValue(false); // 복사 후 버튼을 비활성화
     }
@@ -114,7 +113,7 @@ public class InitViewModel extends ViewModel {
             // pso.db, pso.db-shm, pso.db-wal 파일들을 삭제해라
             File[] savedDbFiles = sdcard.listFiles(pathname -> {
                 String fileName = pathname.getName();
-                return fileName.startsWith("pso.db");
+                return fileName.startsWith("sim4_usb.db");
             });
             if (savedDbFiles != null) {
                 for (File file : savedDbFiles) {
@@ -131,18 +130,18 @@ public class InitViewModel extends ViewModel {
         return false;
     }
 
-    private boolean savePasswordFile() {
-        String path = Manager.getPasswordPathOnUsb();
-        if (path != null) {
-            try {
-                Files.copy(new File(path), new File(Manager.PW_PATH));
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
+//    private boolean savePasswordFile() {
+//        String path = Manager.getPasswordPathOnUsb();
+//        if (path != null) {
+//            try {
+//                Files.copy(new File(path), new File(Manager.PW_PATH));
+//                return true;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return false;
+//    }
 
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -193,6 +192,5 @@ public class InitViewModel extends ViewModel {
 
     private void checkFileOnUsb() {
         existDbOnUsbLiveData.postValue(Manager.findDbOnUsb());
-        existPasswordOnUsbLiveData.postValue(Manager.findPasswordOnUsb());
     }
 }

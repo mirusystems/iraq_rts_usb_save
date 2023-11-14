@@ -36,12 +36,6 @@ public class LoginViewModel extends ViewModel {
     }
 
     private void init() {
-        CharSource source = Files.asCharSource(new File(Manager.PW_PATH), StandardCharsets.US_ASCII);
-        try {
-            password = source.read().trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         try {
             Context context = App.getContext();
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);

@@ -36,15 +36,12 @@ public class UsbSaveFragment extends BaseFragment {
     private static final String TAG = "PsListFragment";
     private UsbListFragmentBinding binding;
     private UsbSaveViewModel mViewModel;
-    private static boolean isCheck = false;
     private UsbAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private int govCode;
     private int edCode;
     private int vrcCode;
-    private int pcCode;
     private int totalPollingStationCount;
-    private List<UsbListEntity> pslist = new ArrayList<>();
 
     public static UsbSaveFragment newInstance() {
         return new UsbSaveFragment();
@@ -65,11 +62,8 @@ public class UsbSaveFragment extends BaseFragment {
             if (args.containsKey(KEY_VRC_CODE)) {
                 vrcCode = args.getInt(KEY_VRC_CODE);
             }
-            if (args.containsKey(KEY_PC_CODE)) {
-                pcCode = args.getInt(KEY_PC_CODE);
-            }
         }
-        Log.v(TAG, "onCreateView: govCode = " + govCode + ", edCode = " + edCode + ", vrcCode = " + vrcCode + ", pcCode = " + pcCode);
+        Log.v(TAG, "onCreateView: govCode = " + govCode + ", edCode = " + edCode + ", vrcCode = " + vrcCode + ", pcCode = ");
         binding = DataBindingUtil.inflate(inflater, R.layout.usb_list_fragment, container, false);
         return binding.getRoot();
     }
@@ -79,8 +73,8 @@ public class UsbSaveFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(UsbSaveViewModel.class);
         LifecycleOwner owner = getViewLifecycleOwner();
-        if (vrcCode > 0 && pcCode > 0) {
-         //   mViewModel.setCode(govCode, edCode, vrcCode, pcCode);
+        if (vrcCode > 0) {
+            mViewModel.setCode(govCode, vrcCode);
         } else {
             mViewModel.setCode(govCode);
         }
@@ -99,7 +93,6 @@ public class UsbSaveFragment extends BaseFragment {
 
         mViewModel.getPollingStationList().observe(owner, list -> {
             adapter.setList(list);
-            pslist =list;
             totalPollingStationCount = list.size();
         });
         mViewModel.getSelectedPollingStation().observe(owner, event -> {
@@ -151,11 +144,11 @@ public class UsbSaveFragment extends BaseFragment {
             if (state != null) {
                 switch (state) {
                     case WAITING_USB_CONNECTED: {
-                        binding.statusText.setText("Insert USB");
+                        binding.statusText.setText("start USB COPY");
                         break;
                     }
-                    case WRITING_USB: {
-                        binding.statusText.setText("Writing...");
+                    case USB_CONNECTED : {
+                        binding.statusText.setText("Waitting...");
                         break;
                     }
                     case WRITE_DONE: {
@@ -167,7 +160,7 @@ public class UsbSaveFragment extends BaseFragment {
                         break;
                     }
                     case WAITING_USB_DISCONNECTED: {
-                        binding.statusText.setText("Remove USB");
+                        binding.statusText.setText("Insert USB");
                         break;
                     }
                 }
@@ -182,13 +175,9 @@ public class UsbSaveFragment extends BaseFragment {
             }
         });
         mViewModel.getCompletedPollingStationCount().observe(owner, event -> {
-            Integer completedPollingStationCount = event;
+            Integer completedPollingStationCount = event.getContentIfNotHandled();
             if (completedPollingStationCount != null) {
-                if (App.isEdEnabled()) {
-                    requireActivity().setTitle(String.format(Locale.ENGLISH, "PS List(GOV: %d, ED: %d, ( %d / %d ))", govCode, edCode, completedPollingStationCount, totalPollingStationCount));
-                } else {
-                    requireActivity().setTitle(String.format(Locale.ENGLISH, "PS List(GOV: %d ( %d / %d ))", govCode, completedPollingStationCount, totalPollingStationCount));
-                }
+                requireActivity().setTitle(String.format(Locale.ENGLISH, "PS List(GOV: %d ( %d / %d ))", govCode, completedPollingStationCount, totalPollingStationCount));
             }
         });
         mViewModel.isStartButtonEnabled().observe(owner, event -> {
